@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Réserver – {{ destination.nom }}{% endblock %}
+{% block content %}
+<div class="py-5" style="background:var(--creme)">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 rounded-4 shadow-lg">
+                    <div class="card-header bg-white rounded-top-4 p-4 border-0">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-calendar-plus me-2" style="color:var(--desert)"></i>
+                            Réserver – {{ destination.nom }}
+                        </h4>
+                        <small class="text-muted">{{ destination.region.nom|default:'' }}</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" id="formReservation">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Type de réservation *</label>
+                                    {{ form.type_reservation }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Date d'arrivée *</label>
+                                    {{ form.date_debut }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Date de départ *</label>
+                                    {{ form.date_fin }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Nombre de personnes *</label>
+                                    {{ form.nb_personnes }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Hébergement</label>
+                                    {{ form.hebergement }}
+                                    {% if not hebergements.exists %}<small class="text-muted">Aucun hébergement disponible pour cette destination</small>{% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Guide local</label>
+                                    {{ form.guide }}
+                                    {% if not guides.exists %}<small class="text-muted">Aucun guide disponible pour cette destination</small>{% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Notes / Demandes spéciales</label>
+                                    {{ form.notes }}
+                                </div>
+                            </div>
+
+                            <!-- ESTIMATION PRIX -->
+                            <div class="alert mt-4" style="background:linear-gradient(135deg,#fff8f0,#fff);border:2px solid var(--sable);border-radius:12px">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold"><i class="fas fa-calculator me-2" style="color:var(--desert)"></i>Prix estimé</span>
+                                    <span class="fw-bold fs-5" id="prix-total" style="color:var(--desert)">–</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Le prix final sera confirmé par notre équipe.</small>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-mauritanie btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i>Envoyer ma demande de réservation
+                                </button>
+                                <a href="{% url 'destination_detail' destination.pk %}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Accueil – Mauritanie Tourisme{% endblock %}
+{% block content %}
+
+<!-- HÉRO VIDÉO -->
+<section class="position-relative" style="height:100vh;overflow:hidden">
+    <!-- Vidéo de fond (remplacez src par vraie vidéo Mauritanie) -->
+    <video autoplay muted loop playsinline class="position-absolute w-100 h-100"
+           style="object-fit:cover;top:0;left:0;z-index:0">
+        <source src="{% static 'videos/mauritanie_hero.mp4' %}" type="video/mp4">
+    </video>
+    <!-- Overlay sable du désert -->
+    <div class="hero-overlay position-absolute w-100 h-100" style="z-index:1"></div>
+    <div class="position-relative d-flex flex-column justify-content-center align-items-center text-white text-center h-100" style="z-index:2">
+        <p class="mb-2 fw-light" style="letter-spacing:.3rem;color:var(--sable);font-size:.9rem">BIENVENUE EN</p>
+        <h1 class="display-2 fw-bold mb-3" style="text-shadow:2px 2px 20px rgba(0,0,0,.5)">
+            Mauritanie<br>
+            <span style="color:var(--sable)">Tourisme</span>
+        </h1>
+        <p class="lead mb-5 fw-light" style="max-width:600px;text-shadow:1px 1px 8px rgba(0,0,0,.5)">
+            Explorez les ksour millénaires, les dunes de l'Adrar, les plages sauvages et l'hospitalité legendaire de la Mauritanie.
+        </p>
+        <div class="d-flex gap-3 flex-wrap justify-content-center">
+            <a href="{% url 'destinations' %}" class="btn btn-mauritanie btn-lg px-5">
+                <i class="fas fa-compass me-2"></i>Explorer maintenant
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'inscription' %}" class="btn btn-outline-light btn-lg px-5 rounded-pill">
+                <i class="fas fa-user-plus me-2"></i>Créer un compte
+            </a>
+            {% endif %}
+        </div>
+        <!-- Scroll indicator -->
+        <div class="position-absolute bottom-0 mb-4 animate__animated animate__bounce">
+            <i class="fas fa-chevron-down fa-2x" style="color:var(--sable)"></i>
+        </div>
+    </div>
+</section>
+
+<!-- STATS RAPIDES -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="p-4">
+                    <div class="display-5 fw-bold" style="color:var(--desert)">15+</div>
+                    <div class="text-muted">Destinations</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-4">
+                    <div class="display-5 fw-bold" style="color:var(--ocean)">30+</div>
+                    <div class="text-muted">Hébergements</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-4">
+                    <div class="display-5 fw-bold" style="color:var(--vert)">20+</div>
+                    <div class="text-muted">Guides certifiés</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-4">
+                    <div class="display-5 fw-bold" style="color:var(--sable)">500+</div>
+                    <div class="text-muted">Voyageurs satisfaits</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DESTINATIONS VEDETTES -->
+<section class="py-5" style="background:var(--creme)">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h2 class="section-title">Destinations à découvrir</h2>
+            <a href="{% url 'destinations' %}" class="btn btn-mauritanie">Voir tout <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for dest in destinations %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-tourisme h-100">
+                    {% if dest.image_principale %}
+                        <img src="{{ dest.image_principale.url }}" class="card-img-top" alt="{{ dest.nom }}">
+                    {% else %}
+                        <div class="card-img-placeholder"><i class="fas fa-mountain"></i></div>
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold mb-0">{{ dest.nom }}</h5>
+                            <span class="badge-note"><i class="fas fa-star me-1"></i>{{ dest.note_moyenne|floatformat:1 }}</span>
+                        </div>
+                        {% if dest.region %}
+                        <small class="text-muted"><i class="fas fa-map-marker-alt me-1" style="color:var(--desert)"></i>{{ dest.region.nom }}</small>
+                        {% endif %}
+                        <p class="card-text text-muted small mt-2">{{ dest.description|truncatechars:100 }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="{% url 'destination_detail' dest.pk %}" class="btn btn-mauritanie btn-sm w-100">
+                            <i class="fas fa-eye me-1"></i>Découvrir
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- POURQUOI CHOISIR MAURITANIE -->
+<section class="py-5 bg-white">
+    <div class="container text-center">
+        <h2 class="section-title text-center mx-auto mb-5" style="display:inline-block">Pourquoi visiter la Mauritanie ?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="p-4">
+                    <div class="mb-3" style="font-size:3rem;color:var(--sable)"><i class="fas fa-sun"></i></div>
+                    <h5 class="fw-bold">Paysages uniques</h5>
+                    <p class="text-muted">Des dunes d'or de l'Adrar aux rives du fleuve Sénégal, une nature à couper le souffle.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4">
+                    <div class="mb-3" style="font-size:3rem;color:var(--ocean)"><i class="fas fa-mosque"></i></div>
+                    <h5 class="fw-bold">Patrimoine millénaire</h5>
+                    <p class="text-muted">Chinguetti, Ouadane, Tichitt — cités caravanières classées au patrimoine mondial de l'UNESCO.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4">
+                    <div class="mb-3" style="font-size:3rem;color:var(--vert)"><i class="fas fa-handshake"></i></div>
+                    <h5 class="fw-bold">Hospitalité légendaire</h5>
+                    <p class="text-muted">Le thé à la menthe, le couscous aux poissons, et la chaleur des habitants font de chaque visite un souvenir inoubliable.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HÉBERGEMENTS VEDETTES -->
+<section class="py-5" style="background:var(--creme)">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h2 class="section-title">Hébergements recommandés</h2>
+            <a href="{% url 'hebergements' %}" class="btn btn-ocean">Voir tout <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for heb in hebergements %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card card-tourisme h-100">
+                    {% if heb.image_principale %}
+                        <img src="{{ heb.image_principale.url }}" class="card-img-top" alt="{{ heb.nom }}">
+                    {% else %}
+                        <div class="card-img-placeholder" style="height:180px;font-size:2.5rem"><i class="fas fa-hotel"></i></div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1">{{ heb.nom }}</h6>
+                        <small class="text-muted d-block mb-2"><i class="fas fa-map-marker-alt me-1" style="color:var(--desert)"></i>{{ heb.destination.nom }}</small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold" style="color:var(--desert)">{{ heb.prix_nuit }} MRU/nuit</span>
+                            <span class="stars small"><i class="fas fa-star"></i> {{ heb.note_moyenne|floatformat:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="{% url 'hebergement_detail' heb.pk %}" class="btn btn-ocean btn-sm w-100">Voir détails</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+{% if not user.is_authenticated %}
+<section class="py-5 text-white text-center" style="background:linear-gradient(135deg,var(--nuit),var(--ocean))">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Prêt à explorer la Mauritanie ?</h2>
+        <p class="lead mb-4 fw-light">Créez votre compte gratuitement et commencez à planifier votre aventure.</p>
+        <a href="{% url 'inscription' %}" class="btn btn-mauritanie btn-lg px-5">
+            <i class="fas fa-rocket me-2"></i>Commencer maintenant
+        </a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

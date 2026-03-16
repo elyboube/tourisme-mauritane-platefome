@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block title %}Accueil – Mauritanie Tourisme{% endblock %}
+{% block content %}
+
+<!-- BANDEAU BIENVENUE -->
+<div class="py-4" style="background:linear-gradient(135deg,var(--nuit),var(--ocean))">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="text-white">
+                <h4 class="fw-bold mb-1">
+                    <i class="fas fa-sun me-2" style="color:var(--sable)"></i>
+                    Bienvenue {% if user.is_authenticated %}{{ user.first_name|default:user.username }}{% endif %} !
+                </h4>
+                <p class="mb-0 opacity-75">Que souhaitez-vous découvrir aujourd'hui ?</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'destinations' %}" class="btn btn-mauritanie">
+                    <i class="fas fa-compass me-2"></i>Explorer
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'mes_reservations' %}" class="btn btn-outline-light">
+                    <i class="fas fa-calendar-check me-2"></i>Mes réservations
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICATIONS NON LUES -->
+{% if notifications %}
+<div class="container mt-4">
+    <div class="alert alert-info border-0 rounded-3 shadow-sm" style="background:linear-gradient(135deg,#e8f4fd,#d1ecf1)">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <i class="fas fa-bell me-2 text-primary"></i>
+                <strong>{{ notifications|length }} notification(s) non lue(s)</strong>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" onclick="marquerLu(); this.closest('.alert').remove()">
+                Tout marquer lu
+            </button>
+        </div>
+        <div class="mt-2">
+            {% for notif in notifications %}
+            <div class="d-flex align-items-start gap-2 py-1 border-top">
+                <i class="fas fa-circle mt-1" style="color:var(--ocean);font-size:.5rem"></i>
+                <div>
+                    <strong class="small">{{ notif.titre }}</strong>
+                    <p class="small mb-0 text-muted">{{ notif.message|truncatechars:100 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- BARRE DE RECHERCHE RAPIDE -->
+<div class="container mt-4 mb-2">
+    <div class="card border-0 rounded-4 shadow-sm p-3">
+        <form method="get" action="{% url 'destinations' %}">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small fw-semibold text-muted">Destination</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0" placeholder="Chercher une destination...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Région</label>
+                    <select name="region" class="form-select">
+                        <option value="">Toutes les régions</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-mauritanie w-100">
+                        <i class="fas fa-search me-2"></i>Rechercher
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DESTINATIONS POPULAIRES -->
+<section class="py-5" style="background:var(--creme)">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h2 class="section-title">Destinations populaires</h2>
+            <a href="{% url 'destinations' %}" class="btn btn-mauritanie">Voir tout <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for dest in destinations %}
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-tourisme h-100">
+                    {% if dest.image_principale %}
+                        <img src="{{ dest.image_principale.url }}" class="card-img-top" alt="{{ dest.nom }}" style="height:180px;object-fit:cover">
+                    {% else %}
+                        <div class="card-img-placeholder" style="height:180px">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="fw-bold mb-1">{{ dest.nom }}</h6>
+                            <span class="badge-note text-nowrap"><i class="fas fa-star me-1"></i>{{ dest.note_moyenne|floatformat:1 }}</span>
+                        </div>
+                        {% if dest.region %}
+                        <small class="text-muted"><i class="fas fa-map-marker-alt me-1" style="color:var(--desert)"></i>{{ dest.region.nom }}</small>
+                        {% endif %}
+                        <p class="small text-muted mt-2 mb-0">{{ dest.description|truncatechars:70 }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 d-flex gap-2 pb-3 px-3">
+                        <a href="{% url 'destination_detail' dest.pk %}" class="btn btn-mauritanie btn-sm flex-fill">
+                            <i class="fas fa-eye me-1"></i>Voir
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'creer_reservation' dest.pk %}" class="btn btn-ocean btn-sm" title="Réserver">
+                            <i class="fas fa-calendar-plus"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="fas fa-map-marked-alt fa-3x mb-3 d-block"></i>
+                Aucune destination disponible pour le moment.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- HÉBERGEMENTS RECOMMANDÉS -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h2 class="section-title">Hébergements recommandés</h2>
+            <a href="{% url 'hebergements' %}" class="btn btn-ocean">Voir tout <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for heb in hebergements %}
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-tourisme h-100">
+                    {% if heb.image_principale %}
+                        <img src="{{ heb.image_principale.url }}" class="card-img-top" alt="{{ heb.nom }}" style="height:180px;object-fit:cover">
+                    {% else %}
+                        <div class="card-img-placeholder" style="height:180px">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="fw-bold mb-1">{{ heb.nom }}</h6>
+                            <span class="stars small"><i class="fas fa-star"></i> {{ heb.note_moyenne|floatformat:1 }}</span>
+                        </div>
+                        <small class="text-muted d-block mb-2">
+                            <i class="fas fa-map-marker-alt me-1" style="color:var(--desert)"></i>{{ heb.destination.nom }}
+                            {% if heb.type_hebergement %} · {{ heb.type_hebergement.nom }}{% endif %}
+                        </small>
+                        <!-- Services rapides -->
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% if heb.wifi %}<span class="badge bg-light text-dark border"><i class="fas fa-wifi text-primary me-1"></i>WiFi</span>{% endif %}
+                            {% if heb.piscine %}<span class="badge bg-light text-dark border"><i class="fas fa-swimming-pool text-info me-1"></i>Piscine</span>{% endif %}
+                            {% if heb.restaurant %}<span class="badge bg-light text-dark border"><i class="fas fa-utensils text-warning me-1"></i>Restaurant</span>{% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between align-items-center px-3 pb-3">
+                        <span class="fw-bold" style="color:var(--desert)">{{ heb.prix_nuit }} MRU<small class="text-muted fw-normal">/nuit</small></span>
+                        <a href="{% url 'hebergement_detail' heb.pk %}" class="btn btn-ocean btn-sm">Détails</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="fas fa-hotel fa-3x mb-3 d-block"></i>
+                Aucun hébergement disponible pour le moment.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ACCÈS RAPIDES -->
+<section class="py-5" style="background:var(--creme)">
+    <div class="container">
+        <h2 class="section-title mb-4">Accès rapides</h2>
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <a href="{% url 'destinations' %}" class="text-decoration-none">
+                    <div class="card border-0 rounded-3 shadow-sm text-center p-4 h-100" style="transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="fas fa-map-marked-alt fa-2x mb-2" style="color:var(--desert)"></i>
+                        <div class="fw-semibold text-dark">Destinations</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'guides' %}" class="text-decoration-none">
+                    <div class="card border-0 rounded-3 shadow-sm text-center p-4 h-100" style="transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="fas fa-user-tie fa-2x mb-2" style="color:var(--vert)"></i>
+                        <div class="fw-semibold text-dark">Guides</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'hebergements' %}" class="text-decoration-none">
+                    <div class="card border-0 rounded-3 shadow-sm text-center p-4 h-100" style="transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="fas fa-hotel fa-2x mb-2" style="color:var(--ocean)"></i>
+                        <div class="fw-semibold text-dark">Hébergements</div>
+                    </div>
+                </a>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'mes_reservations' %}" class="text-decoration-none">
+                    <div class="card border-0 rounded-3 shadow-sm text-center p-4 h-100" style="transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="fas fa-calendar-check fa-2x mb-2" style="color:var(--sable)"></i>
+                        <div class="fw-semibold text-dark">Mes réservations</div>
+                    </div>
+                </a>
+            </div>
+            {% else %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'inscription' %}" class="text-decoration-none">
+                    <div class="card border-0 rounded-3 shadow-sm text-center p-4 h-100" style="transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="fas fa-user-plus fa-2x mb-2" style="color:var(--sable)"></i>
+                        <div class="fw-semibold text-dark">S'inscrire</div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

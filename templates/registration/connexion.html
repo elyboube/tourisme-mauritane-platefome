@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Connexion – Mauritanie Tourisme{% endblock %}
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center" style="background:linear-gradient(135deg,var(--nuit) 0%,var(--ocean) 100%)">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card border-0 rounded-4 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="mb-3" style="font-size:3rem;color:var(--ocean)"><i class="fas fa-compass"></i></div>
+                            <h3 class="fw-bold">Bon retour !</h3>
+                            <p class="text-muted">Connectez-vous à votre espace voyageur</p>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nom d'utilisateur</label>
+                                {{ form.username }}
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Mot de passe</label>
+                                {{ form.password }}
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-mauritanie btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-4">
+                            <span class="text-muted">Pas encore de compte ? </span>
+                            <a href="{% url 'inscription' %}" style="color:var(--desert);font-weight:600">S'inscrire gratuitement</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block title %}{{ guide.nom_complet }} – Guide{% endblock %}
+{% block content %}
+
+<!-- HÉRO GUIDE -->
+<div class="py-5" style="background:linear-gradient(135deg,var(--nuit),var(--vert))">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-md-3 text-center">
+                {% if guide.photo %}
+                    <img src="{{ guide.photo.url }}" class="rounded-circle shadow-lg border border-4 border-white"
+                         style="width:150px;height:150px;object-fit:cover">
+                {% else %}
+                    <div class="rounded-circle mx-auto shadow-lg d-flex align-items-center justify-content-center fw-bold text-white border border-4 border-white"
+                         style="width:150px;height:150px;background:var(--ocean);font-size:3rem">
+                        {{ guide.prenom|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-9 text-white">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <h1 class="fw-bold mb-0">{{ guide.nom_complet }}</h1>
+                    {% if guide.est_verifie %}
+                    <span class="badge bg-success fs-6"><i class="fas fa-check-circle me-1"></i>Guide certifié</span>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <button class="btn-favori {% if is_favori %}active{% endif %} text-white"
+                            onclick="toggleFavori('guide', {{ guide.pk }}, this)">
+                        <i class="{% if is_favori %}fas{% else %}far{% endif %} fa-heart fa-lg"></i>
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="d-flex gap-3 flex-wrap mb-3">
+                    <span><i class="fas fa-language me-1" style="color:var(--sable)"></i>{{ guide.langues }}</span>
+                    <span><i class="fas fa-phone me-1" style="color:var(--sable)"></i>{{ guide.telephone }}</span>
+                    <span><i class="fas fa-envelope me-1" style="color:var(--sable)"></i>{{ guide.email }}</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stars">
+                        {% for i in "12345"|make_list %}
+                            <i class="fa{% if forloop.counter <= guide.note_moyenne|floatformat:0|add:'0' %}s{% else %}r{% endif %} fa-star"></i>
+                        {% endfor %}
+                        <span class="ms-2">{{ guide.note_moyenne|floatformat:1 }}/5</span>
+                    </div>
+                    <span class="opacity-75">|</span>
+                    <span>{{ commentaires.count }} avis</span>
+                    <span class="opacity-75">|</span>
+                    <span class="fw-bold fs-5" style="color:var(--sable)">{{ guide.prix_journee }} MRU/jour</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-8">
+
+            <!-- BIOGRAPHIE -->
+            <div class="mb-5">
+                <h3 class="section-title mb-4">Biographie</h3>
+                <p class="text-muted lh-lg">{{ guide.biographie }}</p>
+            </div>
+
+            <!-- SPÉCIALITÉS -->
+            {% if guide.specialites %}
+            <div class="mb-5">
+                <h3 class="section-title mb-4">Spécialités & expertise</h3>
+                <p class="text-muted">{{ guide.specialites }}</p>
+            </div>
+            {% endif %}
+
+            <!-- DESTINATIONS COUVERTES -->
+            {% if destinations %}
+            <div class="mb-5">
+                <h3 class="section-title mb-4">Destinations couvertes</h3>
+                <div class="row g-3">
+                    {% for dest in destinations %}
+                    <div class="col-md-6">
+                        <a href="{% url 'destination_detail' dest.pk %}" class="text-decoration-none">
+                            <div class="card border-0 shadow-sm rounded-3 overflow-hidden" style="transition:.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+                                <div class="d-flex align-items-center p-3 gap-3">
+                                    <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                                         style="width:50px;height:50px;background:linear-gradient(135deg,var(--sable),var(--desert))">
+                                        <i class="fas fa-mountain text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">{{ dest.nom }}</div>
+                                        {% if dest.region %}<small class="text-muted">{{ dest.region.nom }}</small>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- AVIS -->
+            <div class="mb-5">
+                <h3 class="section-title mb-4">Avis des voyageurs ({{ commentaires.count }})</h3>
+                {% for c in commentaires %}
+                <div class="card mb-3 border-0 shadow-sm rounded-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
+                                 style="width:45px;height:45px;background:var(--vert)">
+                                {{ c.utilisateur.username|first|upper }}
+                            </div>
+                            <div class="flex-fill">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-semibold">{{ c.utilisateur.get_full_name|default:c.utilisateur.username }}</span>
+                                    <small class="text-muted">{{ c.date_creation|date:"d/m/Y" }}</small>
+                                </div>
+                                <div class="stars mb-2">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="fa{% if forloop.counter <= c.note %}s{% else %}r{% endif %} fa-star"></i>
+                                    {% endfor %}
+                                </div>
+                                <p class="mb-0 text-muted">{{ c.texte }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Aucun avis pour ce guide. Soyez le premier !</p>
+                {% endfor %}
+
+                {% if user.is_authenticated %}
+                <div class="card border-0 shadow-sm rounded-3 mt-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Donner mon avis sur ce guide</h6>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">{{ form_comment.note.label_tag }}{{ form_comment.note }}</div>
+                            <div class="mb-3">{{ form_comment.texte.label_tag }}{{ form_comment.texte }}</div>
+                            <button type="submit" class="btn btn-mauritanie">
+                                <i class="fas fa-paper-plane me-2"></i>Publier
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-info mt-3">
+                    <a href="{% url 'connexion' %}">Connectez-vous</a> pour laisser un avis.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- SIDEBAR RÉSERVATION -->
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 shadow sticky-top" style="top:80px">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1 text-center">
+                        <i class="fas fa-calendar-plus me-2" style="color:var(--vert)"></i>Réserver ce guide
+                    </h5>
+                    <div class="text-center mb-4">
+                        <span class="fw-bold fs-3" style="color:var(--desert)">{{ guide.prix_journee }} MRU</span>
+                        <span class="text-muted">/jour/personne</span>
+                    </div>
+
+                    {% if destinations %}
+                    <p class="small text-muted text-center mb-3">Choisissez une destination pour réserver avec ce guide</p>
+                    <div class="d-grid gap-2">
+                        {% for dest in destinations|slice:":4" %}
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'creer_reservation' dest.pk %}" class="btn btn-mauritanie btn-sm">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ dest.nom }}
+                        </a>
+                        {% else %}
+                        <a href="{% url 'connexion' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-lock me-2"></i>{{ dest.nom }}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {% if user.is_authenticated %}
+                    <div class="d-grid">
+                        <button class="btn btn-mauritanie btn-lg">
+                            <i class="fas fa-phone me-2"></i>Contacter le guide
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="d-grid">
+                        <a href="{% url 'connexion' %}" class="btn btn-mauritanie btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Connexion pour réserver
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    <hr>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><i class="fas fa-language me-2" style="color:var(--ocean)"></i>{{ guide.langues }}</li>
+                        <li class="mb-2">
+                            <i class="fas fa-circle me-2 {% if guide.est_disponible %}text-success{% else %}text-secondary{% endif %}"></i>
+                            {% if guide.est_disponible %}Disponible{% else %}Indisponible{% endif %}
+                        </li>
+                        <li><i class="fas fa-map-pin me-2" style="color:var(--desert)"></i>{{ destinations.count }} destination(s)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,556 @@
+/* =============================================
+   MAURITANIE TOURISME — CSS Personnalisé
+   ============================================= */
+
+:root {
+  --sable:   #C8A96E;
+  --desert:  #D4874E;
+  --ocean:   #1A6B8C;
+  --vert:    #2D7D46;
+  --nuit:    #1A1A2E;
+  --creme:   #FAF7F2;
+}
+
+/* ─── TYPOGRAPHIE ─────────────────────────── */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--creme);
+  color: #2d2d2d;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+}
+
+/* ─── ANIMATIONS ──────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -1000px 0; }
+  100% { background-position:  1000px 0; }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease both;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ─── LOADING SKELETON ────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+  border-radius: 8px;
+}
+
+/* ─── ÉTOILES ─────────────────────────────── */
+.stars { color: #ffc107; }
+.stars-empty { color: #ddd; }
+
+.rating-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.rating-bar .bar {
+  flex: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rating-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sable), var(--desert));
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+
+/* ─── CARDS ───────────────────────────────── */
+.card-tourisme {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,.07);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.card-tourisme:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.13);
+}
+
+.card-tourisme .card-img-top {
+  height: 220px;
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+
+.card-tourisme:hover .card-img-top {
+  transform: scale(1.04);
+}
+
+.card-img-placeholder {
+  height: 220px;
+  background: linear-gradient(135deg, var(--sable), var(--desert));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: rgba(255,255,255,.7);
+}
+
+/* ─── BOUTONS ─────────────────────────────── */
+.btn-mauritanie {
+  background: linear-gradient(135deg, var(--desert), var(--sable));
+  color: #fff !important;
+  border: none;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: .55rem 1.8rem;
+  transition: transform .2s, box-shadow .2s, filter .2s;
+  letter-spacing: .3px;
+}
+
+.btn-mauritanie:hover, .btn-mauritanie:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(212,135,78,.4);
+  filter: brightness(1.05);
+}
+
+.btn-mauritanie:active {
+  transform: translateY(0);
+}
+
+.btn-ocean {
+  background: linear-gradient(135deg, var(--ocean), #1e88e5);
+  color: #fff !important;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  padding: .55rem 1.8rem;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.btn-ocean:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(26,107,140,.4);
+}
+
+/* ─── BADGES ──────────────────────────────── */
+.badge-note {
+  background: linear-gradient(135deg, var(--sable), var(--desert));
+  color: #fff;
+  font-size: .78rem;
+  padding: .3rem .75rem;
+  border-radius: 50px;
+  font-weight: 600;
+}
+
+.badge-prix {
+  background: linear-gradient(135deg, var(--vert), #43a047);
+  color: #fff;
+  font-size: .78rem;
+  padding: .3rem .75rem;
+  border-radius: 50px;
+  font-weight: 600;
+}
+
+/* ─── SECTION TITLES ──────────────────────── */
+.section-title {
+  font-weight: 700;
+  color: var(--nuit);
+  position: relative;
+  padding-bottom: .8rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--desert), var(--sable));
+  border-radius: 4px;
+}
+
+.section-title.text-center::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ─── HERO ────────────────────────────────── */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(26,26,46,.55) 0%,
+    rgba(26,107,140,.35) 100%
+  );
+}
+
+/* ─── NAVBAR ──────────────────────────────── */
+.navbar {
+  background: linear-gradient(135deg, var(--nuit) 0%, #16213e 100%);
+  box-shadow: 0 2px 20px rgba(0,0,0,.3);
+  transition: padding .3s;
+}
+
+.navbar.scrolled {
+  padding-top: .3rem;
+  padding-bottom: .3rem;
+}
+
+.navbar-brand {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--sable) !important;
+  letter-spacing: -.3px;
+}
+
+.navbar-brand span { color: #fff; }
+
+.nav-link {
+  color: rgba(255,255,255,.82) !important;
+  font-weight: 500;
+  transition: color .25s;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--sable);
+  transition: width .3s;
+  border-radius: 2px;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 70%;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--sable) !important;
+}
+
+/* ─── NOTIFICATIONS ───────────────────────── */
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background: var(--desert);
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: .62rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+/* ─── FAVORI ──────────────────────────────── */
+.btn-favori {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #ccc;
+  transition: color .2s, transform .2s;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn-favori.active,
+.btn-favori:hover {
+  color: #e74c3c;
+  transform: scale(1.2);
+}
+
+/* ─── FILTRES SIDEBAR ─────────────────────── */
+.filter-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 15px rgba(0,0,0,.07);
+}
+
+.filter-card .form-control,
+.filter-card .form-select {
+  border-radius: 10px;
+  border-color: #e0e0e0;
+  font-size: .9rem;
+}
+
+.filter-card .form-control:focus,
+.filter-card .form-select:focus {
+  border-color: var(--ocean);
+  box-shadow: 0 0 0 .2rem rgba(26,107,140,.2);
+}
+
+/* ─── TABLEAUX ────────────────────────────── */
+.table-tourisme {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0,0,0,.06);
+}
+
+.table-tourisme thead {
+  background: var(--nuit);
+  color: #fff;
+}
+
+.table-tourisme thead th {
+  font-weight: 600;
+  border: none;
+  padding: 1rem 1.2rem;
+}
+
+.table-tourisme tbody tr {
+  transition: background .15s;
+}
+
+.table-tourisme tbody tr:hover {
+  background: rgba(26,107,140,.04);
+}
+
+/* ─── COMPARAISON ─────────────────────────── */
+.compare-table th {
+  background: linear-gradient(135deg, var(--ocean), #1565c0);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 1rem;
+}
+
+.compare-ok  { color: var(--vert);  font-size: 1.3rem; }
+.compare-no  { color: #e74c3c; font-size: 1.3rem; }
+
+/* ─── ADMIN SIDEBAR ───────────────────────── */
+.admin-sidebar {
+  background: linear-gradient(180deg, var(--nuit) 0%, #16213e 100%);
+  min-height: 100vh;
+}
+
+.admin-sidebar .nav-link {
+  color: rgba(255,255,255,.72);
+  padding: .75rem 1.5rem;
+  border-radius: 10px;
+  margin: .15rem .5rem;
+  transition: background .2s, color .2s;
+  font-size: .93rem;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+  background: rgba(200,169,110,.18);
+  color: var(--sable) !important;
+}
+
+.admin-sidebar .nav-link i {
+  width: 20px;
+  text-align: center;
+}
+
+/* ─── STAT CARDS ──────────────────────────── */
+.stat-card {
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 3px 15px rgba(0,0,0,.07);
+  transition: transform .25s, box-shadow .25s;
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+}
+
+.stat-card.ocean::before   { background: var(--ocean); }
+.stat-card.vert::before    { background: var(--vert); }
+.stat-card.desert::before  { background: var(--desert); }
+.stat-card.sable::before   { background: var(--sable); }
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+}
+
+/* ─── PAGINATION ──────────────────────────── */
+.pagination .page-link {
+  border-radius: 8px !important;
+  margin: 0 3px;
+  border: none;
+  color: var(--nuit);
+  font-weight: 500;
+  transition: background .2s;
+}
+
+.pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, var(--desert), var(--sable));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(212,135,78,.35);
+}
+
+.pagination .page-link:hover {
+  background: rgba(26,107,140,.1);
+  color: var(--ocean);
+}
+
+/* ─── FORMULAIRES ─────────────────────────── */
+.form-control, .form-select {
+  border-radius: 10px;
+  border-color: #e0e0e0;
+  padding: .6rem 1rem;
+  font-size: .93rem;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--ocean);
+  box-shadow: 0 0 0 .2rem rgba(26,107,140,.18);
+}
+
+.input-group .input-group-text {
+  border-radius: 10px 0 0 10px;
+  border-color: #e0e0e0;
+  background: #fff;
+}
+
+/* ─── ALERTS ──────────────────────────────── */
+.alert {
+  border-radius: 12px;
+  border: none;
+}
+
+.alert-success { background: rgba(45,125,70,.1);  color: var(--vert); }
+.alert-info    { background: rgba(26,107,140,.1); color: var(--ocean); }
+.alert-warning { background: rgba(212,135,78,.12); color: #8a5c00; }
+.alert-danger  { background: rgba(231,76,60,.1);  color: #c0392b; }
+
+/* ─── SCROLL TO TOP ───────────────────────── */
+#scrollTop {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(135deg, var(--desert), var(--sable));
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(212,135,78,.45);
+  display: none;
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s;
+}
+
+#scrollTop:hover {
+  transform: scale(1.1);
+}
+
+/* ─── FOOTER ──────────────────────────────── */
+footer {
+  background: linear-gradient(180deg, var(--nuit) 0%, #0d0d1a 100%);
+  color: rgba(255,255,255,.75);
+}
+
+footer a {
+  color: var(--sable);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+footer a:hover { color: #fff; }
+
+footer .social-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s;
+}
+
+footer .social-icon:hover {
+  background: var(--sable);
+  color: var(--nuit) !important;
+}
+
+/* ─── MAP PLACEHOLDER ─────────────────────── */
+.map-placeholder {
+  background: linear-gradient(135deg, #e8f4f8, #d1ecf1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ocean);
+  font-weight: 500;
+  font-size: .9rem;
+}
+
+/* ─── RESPONSIVE ──────────────────────────── */
+@media (max-width: 768px) {
+  .card-tourisme .card-img-top { height: 180px; }
+  .card-img-placeholder { height: 180px; font-size: 2rem; }
+  .display-2 { font-size: 2.5rem !important; }
+  .admin-sidebar { display: none; }
+}
+
+@media (max-width: 576px) {
+  .btn-mauritanie, .btn-ocean { padding: .5rem 1.2rem; font-size: .88rem; }
+}
+
+/* ─── UTILITAIRES ─────────────────────────── */
+.rounded-top-4    { border-top-left-radius: 1rem !important; border-top-right-radius: 1rem !important; }
+.rounded-bottom-4 { border-bottom-left-radius: 1rem !important; border-bottom-right-radius: 1rem !important; }
+
+.text-desert { color: var(--desert) !important; }
+.text-ocean  { color: var(--ocean) !important; }
+.text-sable  { color: var(--sable) !important; }
+.text-vert   { color: var(--vert) !important; }
+.text-nuit   { color: var(--nuit) !important; }
+
+.bg-desert { background: var(--desert) !important; }
+.bg-ocean  { background: var(--ocean) !important; }
+.bg-sable  { background: var(--sable) !important; }
+.bg-vert   { background: var(--vert) !important; }
+.bg-nuit   { background: var(--nuit) !important; }
+.bg-creme  { background: var(--creme) !important; }

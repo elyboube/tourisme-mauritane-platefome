@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Mes réservations{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="section-title mb-5"><i class="fas fa-calendar-check me-2" style="color:var(--desert)"></i>Mes réservations</h2>
+    {% if reservations %}
+    <div class="row g-4">
+        {% for r in reservations %}
+        <div class="col-12">
+            <div class="card border-0 rounded-3 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-1 text-center">
+                            <span class="fw-bold text-muted">#{{ r.pk }}</span>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fw-bold">{{ r.destination.nom|default:'–' }}</div>
+                            <small class="text-muted">{{ r.get_type_reservation_display }}</small>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block"><i class="fas fa-calendar me-1"></i>{{ r.date_debut|date:"d/m/Y" }} → {{ r.date_fin|date:"d/m/Y" }}</small>
+                            {% if r.hebergement %}<small class="d-block"><i class="fas fa-hotel me-1" style="color:var(--ocean)"></i>{{ r.hebergement.nom }}</small>{% endif %}
+                            {% if r.guide %}<small class="d-block"><i class="fas fa-user-tie me-1" style="color:var(--vert)"></i>{{ r.guide.nom_complet }}</small>{% endif %}
+                        </div>
+                        <div class="col-md-2">
+                            <span class="fw-bold fs-5" style="color:var(--desert)">{{ r.prix_total }} MRU</span>
+                        </div>
+                        <div class="col-md-2">
+                            {% if r.statut == 'en_attente' %}
+                                <span class="badge bg-warning text-dark fs-6 px-3 py-2"><i class="fas fa-clock me-1"></i>En attente</span>
+                            {% elif r.statut == 'confirmee' %}
+                                <span class="badge bg-success fs-6 px-3 py-2"><i class="fas fa-check me-1"></i>Confirmée</span>
+                            {% elif r.statut == 'annulee' %}
+                                <span class="badge bg-danger fs-6 px-3 py-2"><i class="fas fa-times me-1"></i>Annulée</span>
+                            {% else %}
+                                <span class="badge bg-secondary fs-6 px-3 py-2">{{ r.get_statut_display }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-1 text-end">
+                            {% if r.statut in 'en_attente confirmee' %}
+                            <a href="{% url 'annuler_reservation' r.pk %}"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Confirmer l\'annulation ?')">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div style="font-size:4rem;color:#ddd"><i class="fas fa-calendar-times"></i></div>
+        <h5 class="mt-3 text-muted">Vous n'avez aucune réservation</h5>
+        <a href="{% url 'destinations' %}" class="btn btn-mauritanie mt-3">Découvrir des destinations</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

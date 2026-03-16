@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Guides – Mauritanie Tourisme{% endblock %}
+{% block content %}
+
+<div class="py-5 text-white text-center" style="background:linear-gradient(135deg,var(--vert),var(--nuit));min-height:250px;display:flex;align-items:center">
+    <div class="container">
+        <h1 class="display-5 fw-bold"><i class="fas fa-user-tie me-3" style="color:var(--sable)"></i>Nos Guides</h1>
+        <p class="lead fw-light">Des experts locaux passionnés pour vous accompagner</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- BARRE DE RECHERCHE -->
+    <div class="card border-0 rounded-3 shadow-sm p-3 mb-4">
+        <form method="get" class="d-flex gap-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" name="q" value="{{ q }}" class="form-control border-start-0" placeholder="Rechercher par nom, langue, spécialité...">
+            </div>
+            <button type="submit" class="btn btn-mauritanie px-4">Chercher</button>
+            {% if q %}<a href="{% url 'guides' %}" class="btn btn-outline-secondary px-4">Effacer</a>{% endif %}
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <span class="text-muted">{{ page_obj.paginator.count }} guide(s) disponible(s)</span>
+    </div>
+
+    {% if page_obj.object_list %}
+    <div class="row g-4">
+        {% for guide in page_obj %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-tourisme h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        {% if guide.photo %}
+                            <img src="{{ guide.photo.url }}" width="80" height="80" class="rounded-circle flex-shrink-0 shadow-sm" style="object-fit:cover">
+                        {% else %}
+                            <div class="rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
+                                 style="width:80px;height:80px;min-width:80px;background:linear-gradient(135deg,var(--vert),var(--ocean));font-size:1.8rem">
+                                {{ guide.prenom|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div class="flex-fill">
+                            <h5 class="fw-bold mb-1">{{ guide.nom_complet }}</h5>
+                            <div class="stars small mb-1">
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= guide.note_moyenne|floatformat:0|add:"0" %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="text-muted ms-1">{{ guide.note_moyenne|floatformat:1 }}</span>
+                            </div>
+                            {% if guide.est_verifie %}
+                            <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Certifié</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Langues -->
+                    <div class="mb-2">
+                        <small class="fw-semibold text-muted"><i class="fas fa-language me-1" style="color:var(--ocean)"></i>Langues : </small>
+                        <small>{{ guide.langues }}</small>
+                    </div>
+
+                    <!-- Spécialités -->
+                    {% if guide.specialites %}
+                    <div class="mb-2">
+                        <small class="fw-semibold text-muted"><i class="fas fa-star me-1" style="color:var(--sable)"></i>Spécialités : </small>
+                        <small>{{ guide.specialites|truncatechars:60 }}</small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Destinations -->
+                    {% with dests=guide.destinations.all|slice:":3" %}
+                    {% if dests %}
+                    <div class="mb-3">
+                        <small class="fw-semibold text-muted"><i class="fas fa-map-pin me-1" style="color:var(--desert)"></i></small>
+                        {% for d in dests %}
+                        <span class="badge bg-light text-dark border me-1 small">{{ d.nom }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="fw-bold fs-6" style="color:var(--desert)">{{ guide.prix_journee }} MRU<small class="text-muted fw-normal">/jour</small></span>
+                        <span class="badge {% if guide.est_disponible %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if guide.est_disponible %}Disponible{% else %}Indisponible{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 d-flex gap-2 pb-3 px-4">
+                    <a href="{% url 'guide_detail' guide.pk %}" class="btn btn-mauritanie btn-sm flex-fill">
+                        <i class="fas fa-eye me-1"></i>Voir profil
+                    </a>
+                    {% if user.is_authenticated %}
+                    <button class="btn-favori {% if user in guide.favoris.all %}active{% endif %} btn btn-outline-secondary btn-sm"
+                            onclick="toggleFavori('guide', {{ guide.pk }}, this)" title="Ajouter aux favoris">
+                        <i class="{% if user in guide.favoris.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- PAGINATION -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">←</a></li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}&q={{ q }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">→</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <div style="font-size:4rem;color:#ddd"><i class="fas fa-user-slash"></i></div>
+        <h5 class="mt-3 text-muted">Aucun guide trouvé</h5>
+        <a href="{% url 'guides' %}" class="btn btn-mauritanie mt-3">Voir tous les guides</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

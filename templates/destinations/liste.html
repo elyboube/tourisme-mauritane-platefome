@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Destinations – Mauritanie Tourisme{% endblock %}
+{% block content %}
+<!-- BANNIÈRE -->
+<div class="py-5 text-white text-center" style="background:linear-gradient(135deg,var(--nuit),var(--ocean));min-height:250px;display:flex;align-items:center">
+    <div class="container">
+        <h1 class="display-5 fw-bold"><i class="fas fa-map-marked-alt me-3" style="color:var(--sable)"></i>Destinations</h1>
+        <p class="lead fw-light">Partez à la conquête des trésors cachés de la Mauritanie</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- FILTRES -->
+        <div class="col-lg-3">
+            <div class="filter-card sticky-top" style="top:80px">
+                <h6 class="fw-bold mb-3"><i class="fas fa-sliders-h me-2" style="color:var(--desert)"></i>Filtres</h6>
+                <form method="get">
+                    <div class="mb-3">
+                        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Rechercher...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Région</label>
+                        <select name="region" class="form-select">
+                            <option value="">Toutes les régions</option>
+                            {% for r in regions %}
+                            <option value="{{ r.pk }}" {% if region_sel == r.pk|stringformat:"s" %}selected{% endif %}>{{ r.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Trier par</label>
+                        <select name="tri" class="form-select">
+                            <option value="note"  {% if tri == "note" %}selected{% endif %}>Meilleures notes</option>
+                            <option value="nom"   {% if tri == "nom" %}selected{% endif %}>Nom A-Z</option>
+                            <option value="prix"  {% if tri == "prix" %}selected{% endif %}>Prix d'entrée</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-mauritanie w-100">Filtrer</button>
+                    <a href="{% url 'destinations' %}" class="btn btn-outline-secondary w-100 mt-2">Réinitialiser</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- LISTE -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">{{ page_obj.paginator.count }} destination(s) trouvée(s)</span>
+            </div>
+            {% if page_obj.object_list %}
+            <div class="row g-4">
+                {% for dest in page_obj %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-tourisme h-100">
+                        {% if dest.image_principale %}
+                            <img src="{{ dest.image_principale.url }}" class="card-img-top" alt="{{ dest.nom }}">
+                        {% else %}
+                            <div class="card-img-placeholder"><i class="fas fa-mountain"></i></div>
+                        {% endif %}
+                        <!-- Favori -->
+                        {% if user.is_authenticated %}
+                        <div class="position-absolute" style="top:10px;right:10px">
+                            <button class="btn-favori {% if user in dest.favoris.all %}active{% endif %}"
+                                    onclick="toggleFavori('destination', {{ dest.pk }}, this)">
+                                <i class="{% if user in dest.favoris.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h5 class="card-title fw-bold mb-0">{{ dest.nom }}</h5>
+                                <span class="badge-note"><i class="fas fa-star me-1"></i>{{ dest.note_moyenne|floatformat:1 }}</span>
+                            </div>
+                            {% if dest.region %}
+                            <small class="text-muted"><i class="fas fa-map-marker-alt me-1" style="color:var(--desert)"></i>{{ dest.region.nom }}</small>
+                            {% endif %}
+                            <p class="card-text text-muted small mt-2">{{ dest.description|truncatechars:90 }}</p>
+                            {% if dest.prix_entree > 0 %}
+                            <small class="fw-semibold" style="color:var(--vert)"><i class="fas fa-ticket-alt me-1"></i>{{ dest.prix_entree }} MRU</small>
+                            {% else %}
+                            <small class="text-success fw-semibold"><i class="fas fa-check-circle me-1"></i>Entrée gratuite</small>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent border-0 d-flex gap-2 pb-3">
+                            <a href="{% url 'destination_detail' dest.pk %}" class="btn btn-mauritanie btn-sm flex-fill">
+                                <i class="fas fa-eye me-1"></i>Découvrir
+                            </a>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'creer_reservation' dest.pk %}" class="btn btn-ocean btn-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- PAGINATION -->
+            {% if page_obj.has_other_pages %}
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}&region={{ region_sel }}&tri={{ tri }}">←</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}&q={{ q }}&region={{ region_sel }}&tri={{ tri }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}&region={{ region_sel }}&tri={{ tri }}">→</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            {% else %}
+            <div class="text-center py-5">
+                <div style="font-size:4rem;color:#ddd"><i class="fas fa-search"></i></div>
+                <h5 class="mt-3 text-muted">Aucune destination trouvée</h5>
+                <a href="{% url 'destinations' %}" class="btn btn-mauritanie mt-3">Voir toutes les destinations</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

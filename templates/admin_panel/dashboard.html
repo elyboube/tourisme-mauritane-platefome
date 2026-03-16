@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord – Administration{% endblock %}
+{% block content %}
+<div class="d-flex" style="min-height:calc(100vh - 56px)">
+    <!-- SIDEBAR ADMIN -->
+    <div class="admin-sidebar" style="width:250px;flex-shrink:0">
+        <div class="text-center py-4">
+            <div style="font-size:2.5rem;color:var(--sable)"><i class="fas fa-shield-alt"></i></div>
+            <div class="text-white fw-bold mt-2">Administration</div>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt me-2"></i>Tableau de bord</a>
+            <a class="nav-link" href="{% url 'admin_reservations' %}"><i class="fas fa-calendar-check me-2"></i>Réservations</a>
+            <a class="nav-link" href="{% url 'admin_destinations' %}"><i class="fas fa-map-marked-alt me-2"></i>Destinations</a>
+            <a class="nav-link" href="{% url 'admin_guides' %}"><i class="fas fa-user-tie me-2"></i>Guides</a>
+            <a class="nav-link" href="{% url 'admin_hebergements' %}"><i class="fas fa-hotel me-2"></i>Hébergements</a>
+            <a class="nav-link" href="{% url 'admin_utilisateurs' %}"><i class="fas fa-users me-2"></i>Utilisateurs</a>
+            <hr style="border-color:rgba(255,255,255,.2)" class="mx-3">
+            <a class="nav-link" href="{% url 'accueil' %}"><i class="fas fa-globe me-2"></i>Voir le site</a>
+        </nav>
+    </div>
+
+    <!-- CONTENU ADMIN -->
+    <div class="flex-fill p-4" style="background:#f8f9fa">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0"><i class="fas fa-tachometer-alt me-2" style="color:var(--desert)"></i>Tableau de bord</h4>
+            <small class="text-muted">Connecté : {{ user.username }}</small>
+        </div>
+
+        <!-- STATS -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 rounded-3 shadow-sm" style="border-left:4px solid var(--ocean) !important">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Utilisateurs actifs</div>
+                                <div class="display-6 fw-bold" style="color:var(--ocean)">{{ stats.nb_utilisateurs }}</div>
+                            </div>
+                            <i class="fas fa-users fa-2x text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 rounded-3 shadow-sm" style="border-left:4px solid var(--vert) !important">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Réservations totales</div>
+                                <div class="display-6 fw-bold" style="color:var(--vert)">{{ stats.nb_reservations }}</div>
+                            </div>
+                            <i class="fas fa-calendar-check fa-2x text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 rounded-3 shadow-sm" style="border-left:4px solid var(--desert) !important">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">En attente</div>
+                                <div class="display-6 fw-bold" style="color:var(--desert)">{{ stats.nb_en_attente }}</div>
+                            </div>
+                            <i class="fas fa-clock fa-2x text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 rounded-3 shadow-sm" style="border-left:4px solid var(--sable) !important">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Revenu total (MRU)</div>
+                                <div class="display-6 fw-bold" style="color:var(--sable)">{{ stats.revenu_total|floatformat:0 }}</div>
+                            </div>
+                            <i class="fas fa-coins fa-2x text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOUS-STATS -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 rounded-3 shadow-sm text-center p-3">
+                    <i class="fas fa-map-marked-alt fa-2x mb-2" style="color:var(--desert)"></i>
+                    <div class="fw-bold fs-4">{{ stats.nb_destinations }}</div>
+                    <small class="text-muted">Destinations actives</small>
+                    <div class="mt-2"><a href="{% url 'admin_destinations' %}" class="btn btn-sm btn-mauritanie">Gérer</a></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 rounded-3 shadow-sm text-center p-3">
+                    <i class="fas fa-hotel fa-2x mb-2" style="color:var(--ocean)"></i>
+                    <div class="fw-bold fs-4">{{ stats.nb_hebergements }}</div>
+                    <small class="text-muted">Hébergements actifs</small>
+                    <div class="mt-2"><a href="{% url 'admin_hebergements' %}" class="btn btn-sm btn-ocean">Gérer</a></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 rounded-3 shadow-sm text-center p-3">
+                    <i class="fas fa-user-tie fa-2x mb-2" style="color:var(--vert)"></i>
+                    <div class="fw-bold fs-4">{{ stats.nb_guides }}</div>
+                    <small class="text-muted">Guides disponibles</small>
+                    <div class="mt-2"><a href="{% url 'admin_guides' %}" class="btn btn-sm btn-outline-success">Gérer</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RÉSERVATIONS RÉCENTES -->
+        <div class="card border-0 rounded-3 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h6 class="fw-bold mb-0"><i class="fas fa-clock me-2" style="color:var(--desert)"></i>Réservations récentes</h6>
+                <a href="{% url 'admin_reservations' %}?statut=en_attente" class="btn btn-sm btn-mauritanie">
+                    Voir en attente ({{ stats.nb_en_attente }})
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th><th>Utilisateur</th><th>Destination</th><th>Dates</th><th>Prix</th><th>Statut</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reservations_recentes %}
+                        <tr>
+                            <td>{{ r.pk }}</td>
+                            <td>{{ r.utilisateur.username }}</td>
+                            <td>{{ r.destination.nom|default:'-' }}</td>
+                            <td><small>{{ r.date_debut|date:"d/m" }} → {{ r.date_fin|date:"d/m/Y" }}</small></td>
+                            <td><strong>{{ r.prix_total }} MRU</strong></td>
+                            <td>
+                                {% if r.statut == 'en_attente' %}
+                                    <span class="badge bg-warning text-dark">En attente</span>
+                                {% elif r.statut == 'confirmee' %}
+                                    <span class="badge bg-success">Confirmée</span>
+                                {% elif r.statut == 'annulee' %}
+                                    <span class="badge bg-danger">Annulée</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ r.get_statut_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if r.statut == 'en_attente' %}
+                                <a href="{% url 'admin_confirmer' r.pk %}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Confirmer
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mauritanie Tourisme{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --sable:    #C8A96E;
+            --desert:   #D4874E;
+            --ocean:    #1A6B8C;
+            --vert:     #2D7D46;
+            --nuit:     #1A1A2E;
+            --creme:    #FAF7F2;
+        }
+        * { font-family: 'Poppins', sans-serif; }
+        body { background: var(--creme); color: #2d2d2d; }
+
+        /* NAVBAR */
+        .navbar { background: linear-gradient(135deg, var(--nuit) 0%, var(--ocean) 100%); box-shadow: 0 2px 20px rgba(0,0,0,.3); }
+        .navbar-brand { font-weight: 700; font-size: 1.4rem; color: var(--sable) !important; }
+        .navbar-brand span { color: #fff; }
+        .nav-link { color: rgba(255,255,255,.85) !important; font-weight: 500; transition: .3s; }
+        .nav-link:hover { color: var(--sable) !important; }
+        .nav-link.active { color: var(--sable) !important; }
+
+        /* BOUTONS */
+        .btn-mauritanie {
+            background: linear-gradient(135deg, var(--desert), var(--sable));
+            color: #fff; border: none; font-weight: 600;
+            border-radius: 50px; padding: .6rem 1.8rem;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-mauritanie:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,135,78,.4); color:#fff; }
+
+        .btn-ocean { background: linear-gradient(135deg, var(--ocean), #2196F3); color:#fff; border:none; border-radius:50px; font-weight:600; padding:.6rem 1.8rem; transition:.2s; }
+        .btn-ocean:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,107,140,.4); color:#fff; }
+
+        /* CARTES */
+        .card-tourisme {
+            border: none; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            transition: transform .3s, box-shadow .3s;
+        }
+        .card-tourisme:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,.15); }
+        .card-tourisme .card-img-top { height: 220px; object-fit: cover; }
+        .card-img-placeholder { height: 220px; background: linear-gradient(135deg, var(--sable), var(--desert)); display:flex; align-items:center; justify-content:center; font-size:3rem; color:#fff; }
+
+        /* BADGE ÉTOILES */
+        .stars { color: #ffc107; }
+        .badge-note { background: var(--sable); color: #fff; font-size:.8rem; padding:.3rem .7rem; border-radius:50px; }
+
+        /* SECTIONS */
+        .section-title { font-weight: 700; color: var(--nuit); position: relative; padding-bottom: .8rem; }
+        .section-title::after { content:''; position:absolute; bottom:0; left:0; width:60px; height:4px; background:linear-gradient(90deg,var(--desert),var(--sable)); border-radius:4px; }
+        .section-title.text-center::after { left:50%; transform:translateX(-50%); }
+
+        /* HÉRO */
+        .hero-overlay { background: linear-gradient(to bottom, rgba(26,26,46,.6), rgba(26,107,140,.4)); }
+
+        /* SIDEBAR FILTRES */
+        .filter-card { background:#fff; border-radius:16px; padding:1.5rem; box-shadow:0 2px 15px rgba(0,0,0,.07); }
+
+        /* FOOTER */
+        footer { background: var(--nuit); color:rgba(255,255,255,.8); }
+        footer a { color: var(--sable); text-decoration:none; }
+        footer a:hover { color:#fff; }
+
+        /* NOTIFICATIONS BADGE */
+        .notif-badge { position:absolute; top:-5px; right:-8px; background:var(--desert); color:#fff; border-radius:50%; width:18px; height:18px; font-size:.65rem; display:flex; align-items:center; justify-content:center; }
+
+        /* FAVORI HEART */
+        .btn-favori { background:none; border:none; font-size:1.3rem; color:#ccc; transition:.2s; cursor:pointer; }
+        .btn-favori.active { color:#e74c3c; }
+        .btn-favori:hover { color:#e74c3c; transform:scale(1.2); }
+
+        /* ALERTS */
+        .alert { border-radius: 12px; border:none; }
+
+        /* ADMIN SIDEBAR */
+        .admin-sidebar { background:var(--nuit); min-height:100vh; padding-top:1rem; }
+        .admin-sidebar .nav-link { color:rgba(255,255,255,.75); padding:.75rem 1.5rem; border-radius:10px; margin:.15rem .5rem; }
+        .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active { background:rgba(255,255,255,.1); color:#fff; }
+        .admin-sidebar .nav-link i { width:20px; }
+
+        /* TABLE */
+        .table-tourisme { border-radius:12px; overflow:hidden; box-shadow:0 2px 15px rgba(0,0,0,.06); }
+        .table-tourisme thead { background:var(--nuit); color:#fff; }
+
+        /* COMPARE */
+        .compare-table th { background:var(--ocean); color:#fff; }
+        .compare-ok { color:var(--vert); }
+        .compare-no { color:#e74c3c; }
+
+        /* Scroll top */
+        #scrollTop { position:fixed; bottom:2rem; right:2rem; background:var(--desert); color:#fff; border:none; border-radius:50%; width:45px; height:45px; font-size:1.2rem; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,.2); display:none; z-index:999; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'accueil' %}">
+            <i class="fas fa-compass me-2"></i>Mauritanie<span>Tourisme</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <i class="fas fa-bars text-white"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
+                <li class="nav-item"><a class="nav-link" href="{% url 'destinations' %}"><i class="fas fa-map-marked-alt me-1"></i>Destinations</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'guides' %}"><i class="fas fa-user-tie me-1"></i>Guides</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'hebergements' %}"><i class="fas fa-hotel me-1"></i>Hébergements</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center">
+                {% if user.is_authenticated %}
+                    <!-- Notification bell -->
+                    <li class="nav-item me-2 position-relative">
+                        <a class="nav-link" href="#" onclick="marquerLu()">
+                            <i class="fas fa-bell"></i>
+                            {% with nb=user.notifications.all|length %}
+                            {% if nb > 0 %}<span class="notif-badge">{{ nb }}</span>{% endif %}
+                            {% endwith %}
+                        </a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="{% url 'mes_favoris' %}"><i class="fas fa-heart text-danger"></i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                            {% if user.photo_profil %}
+                                <img src="{{ user.photo_profil.url }}" width="32" height="32" class="rounded-circle me-2" style="object-fit:cover">
+                            {% else %}
+                                <div class="bg-warning rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:32px;height:32px;font-size:.8rem;font-weight:700">{{ user.username|first|upper }}</div>
+                            {% endif %}
+                            {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'profil' %}"><i class="fas fa-user me-2"></i>Mon profil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mes_reservations' %}"><i class="fas fa-calendar-check me-2"></i>Mes réservations</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mes_favoris' %}"><i class="fas fa-heart me-2"></i>Mes favoris</a></li>
+                            {% if user.role == 'admin' %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-primary" href="{% url 'admin_dashboard' %}"><i class="fas fa-shield-alt me-2"></i>Administration</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'deconnexion' %}"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="{% url 'connexion' %}"><i class="fas fa-sign-in-alt me-1"></i>Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-mauritanie btn-sm" href="{% url 'inscription' %}">
+                            <i class="fas fa-user-plus me-1"></i>S'inscrire
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="container mt-3">
+    {% for msg in messages %}
+    <div class="alert {{ msg.tags }} alert-dismissible fade show" role="alert">
+        <i class="fas fa-info-circle me-2"></i>{{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- CONTENU PRINCIPAL -->
+{% block content %}{% endblock %}
+
+<!-- FOOTER -->
+<footer class="py-5 mt-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h5 class="fw-bold mb-3" style="color:var(--sable)"><i class="fas fa-compass me-2"></i>MauritanieTourisme</h5>
+                <p class="small">Découvrez les merveilles de la Mauritanie — désert, culture, hospitalité. Votre plateforme de tourisme de référence.</p>
+            </div>
+            <div class="col-md-2">
+                <h6 class="fw-bold mb-3">Explorer</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-1"><a href="{% url 'destinations' %}">Destinations</a></li>
+                    <li class="mb-1"><a href="{% url 'guides' %}">Guides</a></li>
+                    <li class="mb-1"><a href="{% url 'hebergements' %}">Hébergements</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-bold mb-3">Votre compte</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-1"><a href="{% url 'inscription' %}">S'inscrire</a></li>
+                    <li class="mb-1"><a href="{% url 'connexion' %}">Se connecter</a></li>
+                    {% if user.is_authenticated %}
+                    <li class="mb-1"><a href="{% url 'mes_reservations' %}">Mes réservations</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-bold mb-3">Contact</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-1"><i class="fas fa-map-marker-alt me-2" style="color:var(--sable)"></i>Nouakchott, Mauritanie</li>
+                    <li class="mb-1"><i class="fas fa-envelope me-2" style="color:var(--sable)"></i>contact@mauritanie-tourisme.mr</li>
+                    <li class="mb-1"><i class="fas fa-phone me-2" style="color:var(--sable)"></i>+222 37471755</li>
+                </ul>
+            </div>
+        </div>
+        <hr style="border-color:rgba(255,255,255,.15)" class="my-4">
+        <div class="text-center small" style="color:rgba(255,255,255,.5)">
+            © 2024 MauritanieTourisme. Tous droits réservés. Fait avec ❤️ en Mauritanie.
+        </div>
+    </div>
+</footer>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+// Scroll to top
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').style.display = window.scrollY > 300 ? 'flex' : 'none';
+});
+
+// Marquer notifications lues
+function marquerLu() {
+    fetch('/api/notifications/lire/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCookie('csrftoken')}
+    });
+}
+
+// Toggle favori
+function toggleFavori(type, id, btn) {
+    fetch('/api/favori/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+        body: JSON.stringify({type: type, id: id})
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.classList.toggle('active', data.status === 'added');
+        const icon = btn.querySelector('i');
+        icon.className = data.status === 'added' ? 'fas fa-heart' : 'far fa-heart';
+    });
+}
+
+function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+
+// Prix dynamique réservation
+document.addEventListener('DOMContentLoaded', function() {
+    const dateDebut = document.getElementById('id_date_debut');
+    const dateFin   = document.getElementById('id_date_fin');
+    const heb       = document.getElementById('id_hebergement');
+    const guide     = document.getElementById('id_guide');
+    if (dateDebut && dateFin) {
+        [dateDebut, dateFin, heb, guide].forEach(el => { if(el) el.addEventListener('change', calculerPrix); });
+    }
+});
+
+function calculerPrix() {
+    const d1 = new Date(document.getElementById('id_date_debut')?.value);
+    const d2 = new Date(document.getElementById('id_date_fin')?.value);
+    if (!d1 || !d2 || d2 <= d1) return;
+    const nuits = Math.ceil((d2 - d1) / (1000*60*60*24));
+    let total = 0;
+    const hebSel = document.getElementById('id_hebergement');
+    if (hebSel && hebSel.options[hebSel.selectedIndex]) {
+        const prix = parseFloat(hebSel.options[hebSel.selectedIndex].dataset.prix || 0);
+        total += prix * nuits;
+    }
+    const el = document.getElementById('prix-total');
+    if (el) el.textContent = total.toFixed(2) + ' MRU';
+}
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

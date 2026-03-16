@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Comparer les hébergements{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="section-title mb-5"><i class="fas fa-balance-scale me-2" style="color:var(--desert)"></i>Comparer les hébergements</h2>
+
+    {% if not hebs %}
+    <div class="alert alert-info">
+        <p>Sélectionnez des hébergements à comparer en ajoutant <code>?ids=1&ids=2</code> dans l'URL.</p>
+    </div>
+    <a href="{% url 'hebergements' %}" class="btn btn-mauritanie">Choisir des hébergements</a>
+    {% else %}
+    <div class="table-responsive">
+        <table class="table compare-table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th class="text-start" style="width:200px">Critère</th>
+                    {% for heb in hebs %}<th>{{ heb.nom }}</th>{% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-start fw-semibold">Photo</td>
+                    {% for heb in hebs %}
+                    <td>
+                        {% if heb.image_principale %}
+                            <img src="{{ heb.image_principale.url }}" height="120" class="rounded-3" style="object-fit:cover;width:100%">
+                        {% else %}
+                            <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="height:120px"><i class="fas fa-hotel fa-2x text-muted"></i></div>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold">Destination</td>
+                    {% for heb in hebs %}<td>{{ heb.destination.nom }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold">Type</td>
+                    {% for heb in hebs %}<td>{{ heb.type_hebergement.nom|default:'-' }}</td>{% endfor %}
+                </tr>
+                <tr class="table-warning">
+                    <td class="text-start fw-bold">Prix / nuit</td>
+                    {% for heb in hebs %}<td class="fw-bold fs-5" style="color:var(--desert)">{{ heb.prix_nuit }} MRU</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold">Note</td>
+                    {% for heb in hebs %}
+                    <td><span class="stars"><i class="fas fa-star"></i></span> {{ heb.note_moyenne|floatformat:1 }}/5</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold">Capacité</td>
+                    {% for heb in hebs %}<td>{{ heb.capacite }} personne(s)</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold"><i class="fas fa-wifi me-1"></i>WiFi</td>
+                    {% for heb in hebs %}<td>{% if heb.wifi %}<i class="fas fa-check-circle fa-lg compare-ok"></i>{% else %}<i class="fas fa-times-circle fa-lg compare-no"></i>{% endif %}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold"><i class="fas fa-swimming-pool me-1"></i>Piscine</td>
+                    {% for heb in hebs %}<td>{% if heb.piscine %}<i class="fas fa-check-circle fa-lg compare-ok"></i>{% else %}<i class="fas fa-times-circle fa-lg compare-no"></i>{% endif %}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold"><i class="fas fa-snowflake me-1"></i>Clim.</td>
+                    {% for heb in hebs %}<td>{% if heb.climatisation %}<i class="fas fa-check-circle fa-lg compare-ok"></i>{% else %}<i class="fas fa-times-circle fa-lg compare-no"></i>{% endif %}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold"><i class="fas fa-parking me-1"></i>Parking</td>
+                    {% for heb in hebs %}<td>{% if heb.parking %}<i class="fas fa-check-circle fa-lg compare-ok"></i>{% else %}<i class="fas fa-times-circle fa-lg compare-no"></i>{% endif %}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td class="text-start fw-semibold"><i class="fas fa-utensils me-1"></i>Restaurant</td>
+                    {% for heb in hebs %}<td>{% if heb.restaurant %}<i class="fas fa-check-circle fa-lg compare-ok"></i>{% else %}<i class="fas fa-times-circle fa-lg compare-no"></i>{% endif %}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td></td>
+                    {% for heb in hebs %}
+                    <td>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'creer_reservation' heb.destination.pk %}?heb={{ heb.pk }}" class="btn btn-mauritanie btn-sm">Réserver</a>
+                        {% endif %}
+                        <a href="{% url 'hebergement_detail' heb.pk %}" class="btn btn-ocean btn-sm">Voir</a>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
